@@ -1,0 +1,47 @@
+{
+  "name": "forexjs",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn dev:start",
+    "dev:start": "nodemon -e js,jsx --ignore lib --ignore dist --exec babel-node src/server",
+    "dev:wds": "webpack-dev-server --progress",
+    "prod:build": "rimraf lib dist && babel src -d lib --ignore .test.js && cross-env NODE_ENV=production webpack -p --progress",
+    "prod:start": "cross-env NODE_ENV=production pm2 start lib/server && pm2 logs",
+    "prod:stop": "pm2 delete all",
+    "lint": "standard src webpack.config.babel.js --ext .js,.jsx",
+    "test": "yarn lint",
+    "precommit": "yarn test",
+    "prepush": "yarn test && yarn prod:build"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "d3": "^4.11.0",
+    "express": "^4.16.2",
+    "simple-fxtrade": "^1.1.2",
+    "socket.io": "^2.0.4",
+    "standard": "^10.0.3",
+    "techan": "^0.8.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "cross-env": "^5.1.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-cli": "^1.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-sourcemaps": "^2.6.1",
+    "gulp-uglify": "^3.0.0",
+    "husky": "^0.14.3",
+    "nodemon": "^1.12.1",
+    "open-browser-webpack-plugin": "^0.0.5",
+    "pm2": "^2.7.2",
+    "rimraf": "^2.6.2",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.3"
+  }
+}
