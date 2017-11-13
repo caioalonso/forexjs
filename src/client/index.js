@@ -136,7 +136,6 @@ function setupChart () {
 
   svg = svg.append('g')
   .attr('width', width)
-  // .attr('transform', 'translate('+axisWidth+',0)')
 
   ohlcSelection = svg.append('g')
   .attr('class', 'ohlc')
@@ -199,10 +198,12 @@ function redraw () {
 function resizeChart () {
   var height = parentDiv.clientHeight - verticalMargin
   var width = parentDiv.clientWidth - horizontalMargin
+  x.range([0, width - axisWidth])
+  y.range([height, 0])
   svg.select('.ohlc')
     .attr('width', width).attr('height', height)
-  x.range([0, width])
-  y.range([height, 0])
+  svg.select('.y.axis')
+    .attr('transform', 'translate(' + (width - axisWidth) + ',0)')
   redraw()
 }
 
