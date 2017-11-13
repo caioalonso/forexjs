@@ -8,18 +8,17 @@ import renderApp from './render-app'
 import { APP_NAME, STATIC_PATH, WEB_PORT } from '../shared/config'
 import { isProd } from '../shared/util'
 
-const lastTicks = []
 const run = async () => {
   fx.configure({
-    apiKey: 'API KEY HERE',
-    accountId: 'ACCOUNT ID HERE',
+    apiKey: 'acaac8e8156cc16d6325c098ffec6a0b-e56d059ca6ec0422c420dd60dfeaccd6',
+    accountId: '101-004-6915582-001',
     live: false
   })
   const {accounts: [{id}]} = await fx.accounts()
   fx.setAccount(id)
 
   io.on('connect', async (socket) => {
-    const candles = await fx.candles({id: 'EUR_USD', granularity: 'M1', count: 300})
+    const candles = await fx.candles({id: 'EUR_USD', granularity: 'M1', count: 500, smooth: true})
     socket.emit('pastData', candles)
   })
 

@@ -1,23 +1,38 @@
 import * as d3 from 'd3'
 import techan from 'techan'
 import socketio from 'socket.io-client'
+
 const socket = socketio()
 
-var margin = {top: 20, right: 20, bottom: 30, left: 50},
-  width = 960 - margin.left - margin.right,
-  height = 500 - margin.top - margin.bottom
+var parentDiv
+var candlestick, x, y, xAxis, yAxis, svg, ohlcSelection
+var sma1, sma0, sma1Calculator, sma0Calculator
+var zoom, zoomableInit
+
+var verticalMargin = 20
+var horizontalMargin = 10
+var axisWidth = 50
 
 var candles = []
+
 socket.on('pastData', (data) => {
   data.candles.forEach((candle) => {
     var date = parseDate(candle.time)
     newCandle(date, candle.mid.o, candle.mid.h, candle.mid.l, candle.mid.c)
   })
-  redraw(candles)
+  var accessor = candlestick.accessor()
+  x.domain(candles.map(accessor.d))
+  var candlesToShow = 300
+  x.zoomable().domain([candles.length - candlesToShow, candles.length])
+  y.domain(techan.scale.plot.ohlc(candles.slice(candles.length - candlesToShow, candles.length)).domain())
+  redraw()
+  zoomableInit = x.zoomable().clamp(false).copy()
 })
+
 socket.on('data', (tick) => {
   updateCandles(tick)
-  redraw(candles)
+  y.domain(techan.scale.plot.ohlc(candles.slice(candles.length - 230, candles.length)).domain())
+  redraw()
 })
 
 function parseDate (date) {
@@ -27,7 +42,7 @@ function parseDate (date) {
 
 function updateCandles (tick) {
   tick.price = +tick.bids[0].price
-  tick.date = parseDate(tick.time.slice(0, -7))
+  tick.date = parseDate(tick.time)
   tick.roundDate = d3.timeMinute.floor(tick.date)
 
   var candle = candles.pop()
@@ -69,127 +84,128 @@ function updateOHLC (candle, tick) {
   return candle
 }
 
-var x = techan.scale.financetime()
-.range([0, width])
+function setupChart () {
+  parentDiv = document.getElementById('chart')
+  var height = parentDiv.clientHeight - verticalMargin
+  var width = parentDiv.clientWidth - horizontalMargin
 
-var y = d3.scaleLinear()
-.range([height, 0])
+  x = techan.scale.financetime()
+  .range([0, width - axisWidth])
 
-var candlestick = techan.plot.candlestick()
-.xScale(x)
-.yScale(y)
+  y = d3.scaleLinear()
+  .range([height, 0])
 
-var sma0 = techan.plot.sma()
-.xScale(x)
-.yScale(y)
+  zoom = d3.zoom()
+  .on('zoom', zoomed)
 
-var sma0Calculator = techan.indicator.sma()
-.period(10)
+  candlestick = techan.plot.candlestick()
+  .xScale(x)
+  .yScale(y)
 
-var sma1 = techan.plot.sma()
-.xScale(x)
-.yScale(y)
+  sma0 = techan.plot.sma()
+  .xScale(x)
+  .yScale(y)
 
-var sma1Calculator = techan.indicator.sma()
-.period(20)
+  sma0Calculator = techan.indicator.sma()
+  .period(10)
 
-var xAxis = d3.axisBottom(x)
+  sma1 = techan.plot.sma()
+  .xScale(x)
+  .yScale(y)
 
-var yAxis = d3.axisLeft(y)
+  sma1Calculator = techan.indicator.sma()
+  .period(20)
 
-var timeAnnotation = techan.plot.axisannotation()
-.axis(xAxis)
-.orient('bottom')
-.format(d3.timeFormat('%Y-%m-%d'))
-.width(65)
-.translate([0, height])
+  xAxis = d3.axisBottom(x)
 
-var ohlcAnnotation = techan.plot.axisannotation()
-.axis(yAxis)
-.orient('left')
-.format(d3.format(',.2f'))
+  yAxis = d3.axisRight(y)
 
-var svg = d3.select('body').append('svg')
-.attr('width', width + margin.left + margin.right)
-.attr('height', height + margin.top + margin.bottom)
+  svg = d3.select('div#chart').append('svg')
+  .attr('width', width)
+  .attr('height', parentDiv.clientHeight)
 
-var defs = svg.append('defs')
+  var defs = svg.append('defs')
 
-defs.append('clipPath')
-.attr('id', 'ohlcClip')
-.append('rect')
-.attr('x', 0)
-.attr('y', 0)
-.attr('width', width)
-.attr('height', height)
+  defs.append('clipPath')
+  .attr('id', 'ohlcClip')
+  .append('rect')
+  .attr('x', x(0))
+  .attr('y', y(1))
+  .attr('width', x(1) - x(0))
+  .attr('height', y(0) - y(1))
 
-svg = svg.append('g')
-.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+  svg = svg.append('g')
+  .attr('width', width)
+  // .attr('transform', 'translate('+axisWidth+',0)')
 
-var ohlcSelection = svg.append('g')
-.attr('class', 'ohlc')
-.attr('transform', 'translate(0,0)')
+  ohlcSelection = svg.append('g')
+  .attr('class', 'ohlc')
 
-ohlcSelection.append('g')
-.attr('class', 'candlestick')
-.attr('clip-path', 'url(#ohlcClip)')
+  ohlcSelection.append('g')
+  .attr('class', 'candlestick')
+  .attr('clip-path', 'url(#ohlcClip)')
 
-ohlcSelection.append('g')
-.attr('class', 'indicator sma ma-0')
-.attr('clip-path', 'url(#ohlcClip)')
+  ohlcSelection.append('g')
+  .attr('class', 'indicator sma ma-0')
+  .attr('clip-path', 'url(#ohlcClip)')
 
-ohlcSelection.append('g')
-.attr('class', 'indicator sma ma-1')
-.attr('clip-path', 'url(#ohlcClip)')
+  ohlcSelection.append('g')
+  .attr('class', 'indicator sma ma-1')
+  .attr('clip-path', 'url(#ohlcClip)')
 
-svg.append('g')
-.attr('class', 'x axis')
-.attr('transform', 'translate(0,' + height + ')')
+  svg.append('g')
+  .attr('class', 'x axis')
+  .attr('transform', 'translate(0,' + height + ')')
 
-svg.append('g')
-.attr('class', 'y axis')
-.append('text')
-.attr('transform', 'rotate(-90)')
-.attr('y', 6)
-.attr('dy', '.71em')
-.style('text-anchor', 'end')
-.text('Price ($)')
+  svg.append('g')
+  .attr('class', 'y axis')
+  .attr('transform', 'translate(' + (width - axisWidth) + ',0)')
+  .append('text')
+  .attr('transform', 'rotate(-90)')
+  .attr('y', 6)
+  .attr('dy', '.71em')
+  .style('text-anchor', 'end')
 
-svg.append('g')
-.attr('class', 'crosshair ohlc')
+  svg.append('rect')
+  .attr('class', 'pane')
+  .attr('width', width)
+  .attr('height', height)
+  .call(zoom)
+}
 
-var coordsText = svg.append('text')
-.style('text-anchor', 'end')
-.attr('class', 'coords')
-.attr('x', width - 5)
-.attr('y', 15)
+function zoomed () {
+  var rescaledY = d3.event.transform.rescaleY(y)
+  var rescaledX = d3.event.transform.rescaleX(zoomableInit)
+  yAxis.scale(rescaledY)
+  sma0.yScale(rescaledY)
+  sma1.yScale(rescaledY)
+  candlestick.yScale(rescaledY)
+  x.zoomable().domain(rescaledX.domain())
+  redraw()
+}
 
-function redraw (data) {
-  var accessor = candlestick.accessor()
-
-  x.domain(data.map(accessor.d))
-  // Show only 150 points on the plot
-  x.zoomable().domain([data.length - 130, data.length])
-
-  // Update y scale min max, only on viewable zoomable.domain()
-  y.domain(techan.scale.plot.ohlc(data.slice(data.length - 130, data.length)).domain())
-
-  // Setup a transition for all that support
+function redraw () {
   svg
-  //          .transition() // Disable transition for now, each is only for transitions
   .each(function () {
     var selection = d3.select(this)
     selection.select('g.x.axis').call(xAxis)
     selection.select('g.y.axis').call(yAxis)
-
-    selection.select('g.candlestick').datum(data).call(candlestick)
-    selection.select('g.sma.ma-0').datum(sma0Calculator(data)).call(sma0)
-    selection.select('g.sma.ma-1').datum(sma1Calculator(data)).call(sma1)
+    selection.select('g.candlestick').datum(candles).call(candlestick)
+    selection.select('g.sma.ma-0').datum(sma0Calculator(candles)).call(sma0)
+    selection.select('g.sma.ma-1').datum(sma1Calculator(candles)).call(sma1)
   })
 }
 
-function move (coords) {
-  coordsText.text(
-    timeAnnotation.format()(coords.x) + ', ' + ohlcAnnotation.format()(coords.y)
-)
+function resizeChart () {
+  var height = parentDiv.clientHeight - verticalMargin
+  var width = parentDiv.clientWidth - horizontalMargin
+  svg.select('.ohlc')
+    .attr('width', width).attr('height', height)
+  x.range([0, width])
+  y.range([height, 0])
+  redraw()
 }
+
+document.addEventListener('DOMContentLoaded', setupChart)
+
+d3.select(window).on('resize.updatesvg', resizeChart)
