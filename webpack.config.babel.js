@@ -35,7 +35,7 @@ export default {
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      'd3': path.resolve(__dirname, 'dist/d3.min.js')
+      'd3': path.resolve(__dirname, 'lib/d3.min.js')
     }
   },
   devServer: {
