@@ -13,11 +13,11 @@
     "lint": "standard src webpack.config.babel.js --ext .js,.jsx",
     "test": "yarn lint",
     "precommit": "yarn test",
-    "prepush": "yarn test && yarn prod:build"
+    "prepush": "yarn test && yarn prod:build",
+    "prepublish": "rollup -c && uglifyjs dist/d3.js -c -m -o dist/d3.min.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "d3": "^4.11.0",
     "express": "^4.16.2",
     "simple-fxtrade": "^1.1.2",
     "socket.io": "^2.0.4",
@@ -25,6 +25,7 @@
     "techan": "^0.8.0"
   },
   "devDependencies": {
+    "d3": "^4.11.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
@@ -44,7 +45,10 @@
     "open-browser-webpack-plugin": "^0.0.5",
     "pm2": "^2.7.2",
     "rimraf": "^2.6.2",
+    "rollup": "^0.51.5",
+    "rollup-plugin-node-resolve": "^3.0.0",
     "sass-loader": "^6.0.6",
+    "uglify-js": "^3.1.9",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3"
   }

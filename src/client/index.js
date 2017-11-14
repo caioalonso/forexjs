@@ -5,8 +5,8 @@ import socketio from 'socket.io-client'
 const socket = socketio()
 
 var parentDiv
-var candlestick, x, y, xAxis, yAxis, svg, ohlcSelection
-var sma1, sma0, sma1Calculator, sma0Calculator
+var candlestick, x, y, xAxis, yAxis, svg, ohlcSelection, ohlcRightAnnotation, crosshair
+var sma1, sma0, sma1Calculator, sma0Calculator, timeAnnotation
 var zoom, zoomableInit
 
 var verticalMargin = 20
@@ -120,6 +120,24 @@ function setupChart () {
 
   yAxis = d3.axisRight(y)
 
+  ohlcRightAnnotation = techan.plot.axisannotation()
+    .axis(yAxis)
+    .orient('right')
+    .translate([width - axisWidth, 0])
+
+  timeAnnotation = techan.plot.axisannotation()
+    .axis(xAxis)
+    .orient('bottom')
+    .format(d3.timeFormat('%H:%M'))
+    .width(40)
+    .translate([0, height])
+
+  crosshair = techan.plot.crosshair()
+    .xScale(x)
+    .yScale(y)
+    .yAnnotation(ohlcRightAnnotation)
+    .xAnnotation(timeAnnotation)
+
   svg = d3.select('div#chart').append('svg')
   .attr('width', width)
   .attr('height', parentDiv.clientHeight)
@@ -170,6 +188,11 @@ function setupChart () {
   .attr('width', width)
   .attr('height', height)
   .call(zoom)
+
+  svg.append('g')
+    .attr('class', 'crosshair')
+    .datum({ x: x.domain()[80], y: 67.5 })
+    .call(crosshair)
 }
 
 function zoomed () {

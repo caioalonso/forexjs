@@ -4,6 +4,7 @@ body {
   margin:1em;
   margin-left:0;
   padding:0;
+    font: 10px sans-serif;
 }
 
 #chart {
@@ -80,8 +81,24 @@ path.candle.equal {
   stroke: #CCC;
 }
 
+.y.annotation.left path {
+    fill: #00AA00;
+}
+
+.y.annotation.right path {
+    fill: #FF0000;
+}
+
+.x.annotation path {
+    fill: #DDD80E;
+}
+
 .crosshair {
   cursor: crosshair;
+  
+  text {
+    fill:#111;
+  }
 }
 
 .crosshair path.wire {

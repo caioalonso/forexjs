@@ -33,7 +33,10 @@ export default {
   },
   devtool: isProd ? false : 'source-map',
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
+    alias: {
+      'd3': path.resolve(__dirname, 'dist/d3.min.js')
+    }
   },
   devServer: {
     port: WDS_PORT
