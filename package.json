@@ -25,7 +25,6 @@
     "techan": "^0.8.0"
   },
   "devDependencies": {
-    "d3": "^4.11.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
@@ -39,7 +38,9 @@
     "gulp-concat": "^2.6.1",
     "gulp-sourcemaps": "^2.6.1",
     "gulp-uglify": "^3.0.0",
+    "highcharts": "^6.0.3",
     "husky": "^0.14.3",
+    "moment": "^2.19.2",
     "node-sass": "^4.5.3",
     "nodemon": "^1.12.1",
     "open-browser-webpack-plugin": "^0.0.5",
