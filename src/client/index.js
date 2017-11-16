@@ -28,9 +28,9 @@ var chart = Highcharts.stockChart('chart', {
       forced: false
     }
   },
-  { type: 'ema', linkedTo: 'EURUSD', name: 'EMA (10)', params: { period: 10 }},
-  { type: 'ema', linkedTo: 'EURUSD', name: 'EMA (50)', params: { period: 50 }},
-  { type: 'sma', linkedTo: 'EURUSD', name: 'SMA (100)', params: { period: 100 }}],
+  { type: 'ema', linkedTo: 'EURUSD', name: 'EMA (10)', params: { period: 10 }, marker: { enabled: false }},
+  { type: 'ema', linkedTo: 'EURUSD', name: 'EMA (50)', params: { period: 50 }, marker: { enabled: false }},
+  { type: 'sma', linkedTo: 'EURUSD', name: 'SMA (100)', params: { period: 100 }, marker: { enabled: false }}],
   rangeSelector: false
 })
 
