@@ -19,14 +19,14 @@ const run = async () => {
 
   io.on('connect', async (socket) => {
     try {
-      const candles = await fx.candles({id: 'GBP_USD', granularity: 'M1', count: 300, smooth: false})
+      const candles = await fx.candles({id: 'EUR_USD', granularity: 'M1', count: 300, smooth: false})
       socket.emit('pastData', candles)
     } catch (e) {
       console.log(e)
     }
   })
 
-  const stream = await fx.pricing.stream({ instruments: 'GBP_USD' })
+  const stream = await fx.pricing.stream({ instruments: 'EUR_USD' })
   stream.on('data', data => {
     if (data.type === 'PRICE') {
       io.emit('data', data)
