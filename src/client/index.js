@@ -13,6 +13,9 @@ var chart = Highcharts.stockChart('chart', {
   title: {
     text: 'EURUSD M1'
   },
+  tooltip: {
+    'enabled': false
+  },
   credits: {
     enabled: false
   },
@@ -28,9 +31,9 @@ var chart = Highcharts.stockChart('chart', {
       forced: false
     }
   },
-  { type: 'ema', linkedTo: 'EURUSD', name: 'EMA (10)', params: { period: 10 }, marker: { enabled: false }},
-  { type: 'ema', linkedTo: 'EURUSD', name: 'EMA (50)', params: { period: 50 }, marker: { enabled: false }},
-  { type: 'sma', linkedTo: 'EURUSD', name: 'SMA (100)', params: { period: 100 }, marker: { enabled: false }}],
+  { type: 'ema', linkedTo: 'EURUSD', name: 'EMA (10)', params: { period: 10 }, marker: { enabled: false }, 'enableMouseTracking': false },
+  { type: 'ema', linkedTo: 'EURUSD', name: 'EMA (50)', params: { period: 50 }, marker: { enabled: false }, 'enableMouseTracking': false},
+  { type: 'sma', linkedTo: 'EURUSD', name: 'SMA (100)', params: { period: 100 }, marker: { enabled: false }, 'enableMouseTracking': false}],
   rangeSelector: false
 })
 
