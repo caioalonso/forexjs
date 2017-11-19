@@ -7,8 +7,34 @@ import socketio from 'socket.io'
 import renderApp from './render-app'
 import { APP_NAME, STATIC_PATH, WEB_PORT } from '../shared/config'
 import { isProd } from '../shared/util'
+import { importCsv } from './csvtomongo'
 
-const run = async () => {
+var program = require('commander')
+
+program
+  .version('0.0.0')
+  .option('-i, --import <file>', 'Import the specified CSV tick file')
+  .parse(process.argv);
+ 
+if (program.import) {
+  importCsv(program.import)
+} else {
+  const app = express()
+  const server = http.createServer(app)
+  const io = socketio(server)
+
+  run()
+
+  server.listen(WEB_PORT, () => {
+    console.log(`${APP_NAME} running on port ${WEB_PORT} ${isProd ? '(production)'
+    : '(development).\nKeep "yarn dev:wds" running in an other terminal'}.`)
+  })
+  app.use(STATIC_PATH, express.static('dist'))
+  app.use(STATIC_PATH, express.static('public'))
+  app.get('/', (req, res) => res.send(renderApp(APP_NAME)))
+}
+
+async function run () {
   fx.configure({
     apiKey: 'acaac8e8156cc16d6325c098ffec6a0b-e56d059ca6ec0422c420dd60dfeaccd6',
     accountId: '101-004-6915582-001',
@@ -34,16 +60,3 @@ const run = async () => {
   })
 }
 
-const app = express()
-const server = http.createServer(app)
-const io = socketio(server)
-
-run()
-
-server.listen(WEB_PORT, () => {
-  console.log(`${APP_NAME} running on port ${WEB_PORT} ${isProd ? '(production)'
-  : '(development).\nKeep "yarn dev:wds" running in an other terminal'}.`)
-})
-app.use(STATIC_PATH, express.static('dist'))
-app.use(STATIC_PATH, express.static('public'))
-app.get('/', (req, res) => res.send(renderApp(APP_NAME)))
