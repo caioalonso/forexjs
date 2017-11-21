@@ -7,19 +7,18 @@ import socketio from 'socket.io'
 import renderApp from './render-app'
 import { APP_NAME, STATIC_PATH, WEB_PORT } from '../shared/config'
 import { isProd } from '../shared/util'
-import { importCsv } from './csvtomongo'
+import { runTest } from './test'
 
 var program = require('commander')
 var io
 
 program
   .version('0.0.0')
-  .option('-i, --import <file>', 'Import the specified CSV tick file')
-  .option('-t, --test', 'Run the backtest')
+  .option('-t, --test <file>', 'Execute the strategy on the CSV tick data')
   .parse(process.argv)
 
-if (program.import) {
-  importCsv(program.import)
+if (program.test) {
+  runTest(program.test)
 } else {
   const app = express()
   const server = http.createServer(app)

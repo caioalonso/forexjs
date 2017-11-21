@@ -1,20 +1,24 @@
-import { MongoClient } from 'mongodb'
-import * as assert from 'assert'
 import moment from 'moment'
 import Candle from './candle'
+import csv from 'fast-csv'
+import ProgressBar from 'progress'
+import { execSync } from 'child_process'
 
-var url = 'mongodb://localhost:27017/forexjs'
 var candles = []
 
-MongoClient.connect(url, async (err, db) => {
-  assert.equal(null, err)
-  const cursor = await db.collection('ticks').find().sort({timestamp: 1})
-  while (await cursor.hasNext()) {
-    const tick = await cursor.next()
+export function runTest (file) {
+  var csvFile = csv.fromPath(file)
+  var lines = +execSync('wc -l ' + file).toString('utf-8').split(' ')[0]
+  var bar = new ProgressBar(':bar :rate/s :percent (ETA: :eta)', { total: lines })
+
+  csvFile.on('data', function (tick) {
     updateCandles(tick)
-  }
-  db.close()
-})
+    bar.tick()
+  })
+  .on('end', function () {
+    console.log('\ndone\n')
+  })
+}
 
 function updateCandles (tick) {
   let date = moment(tick.timestamp)
