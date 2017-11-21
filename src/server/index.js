@@ -10,18 +10,20 @@ import { isProd } from '../shared/util'
 import { importCsv } from './csvtomongo'
 
 var program = require('commander')
+var io
 
 program
   .version('0.0.0')
   .option('-i, --import <file>', 'Import the specified CSV tick file')
-  .parse(process.argv);
- 
+  .option('-t, --test', 'Run the backtest')
+  .parse(process.argv)
+
 if (program.import) {
   importCsv(program.import)
 } else {
   const app = express()
   const server = http.createServer(app)
-  const io = socketio(server)
+  io = socketio(server)
 
   run()
 
@@ -59,4 +61,3 @@ async function run () {
     }
   })
 }
-
