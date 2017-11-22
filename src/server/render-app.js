@@ -1,3 +1,5 @@
+'use strict'
+
 import { isProd } from '../shared/util'
 import { WDS_PORT, STATIC_PATH } from '../shared/config'
 

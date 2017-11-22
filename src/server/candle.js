@@ -1,3 +1,5 @@
+'use strict'
+
 export default class Candle {
   constructor (timestamp, open, high, low, close) {
     this.timestamp = timestamp

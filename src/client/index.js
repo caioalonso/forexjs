@@ -1,3 +1,5 @@
+'use strict'
+
 import socketio from 'socket.io-client'
 import Highcharts from 'highstock-release'
 import indicators from 'highstock-release/indicators/indicators'

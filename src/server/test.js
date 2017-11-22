@@ -1,3 +1,5 @@
+'use strict'
+
 import moment from 'moment'
 import Candle from './candle'
 import csv from 'fast-csv'
