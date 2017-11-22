@@ -8,13 +8,13 @@ export default class Candle {
   }
 
   update (tick) {
-    tick.price = +tick.price
-    if (tick.price > this.high) {
-      this.high = tick.price
+    tick[2] = +tick[2]
+    if (tick[2] > this.high) {
+      this.high = tick[2]
     }
-    if (tick.price < this.low) {
-      this.low = tick.price
+    if (tick[2] < this.low) {
+      this.low = tick[2]
     }
-    this.close = tick.price
+    this.close = tick[2]
   }
 }
