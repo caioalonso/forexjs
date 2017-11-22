@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "debug",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/.compiled/server/index",
+      "stopOnEntry": false,
+      "args": [
+        "-t",
+        "EURUSD-2017_01_01-2017_02_01.csv"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "compile",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "outFiles": ["${workspaceRoot}/.compiled"]
+    }
+  ]
+}

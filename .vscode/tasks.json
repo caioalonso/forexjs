@@ -1,0 +1,10 @@
+{
+  "tasks": [
+    {
+      "label": "compile",
+      "type": "npm",
+      "script": "dev:compile",
+      "problemMatcher": []
+    }
+  ]
+}
