@@ -11,10 +11,7 @@
     "prod:build": "rimraf lib dist && babel src -d lib --ignore .test.js && cross-env NODE_ENV=production webpack -p --progress",
     "prod:start": "cross-env NODE_ENV=production pm2 start lib/server && pm2 logs",
     "prod:stop": "pm2 delete all",
-    "lint": "standard src webpack.config.babel.js --ext .js,.jsx",
-    "test": "yarn lint",
-    "precommit": "yarn test",
-    "prepush": "yarn test && yarn prod:build"
+    "prepush": "yarn prod:build"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -25,7 +22,7 @@
     "progress": "^2.0.0",
     "simple-fxtrade": "^1.1.2",
     "socket.io": "^2.0.4",
-    "standard": "^10.0.3",
+    "eslint": "^4.11.0",
     "techan": "^0.8.0"
   },
   "devDependencies": {
@@ -35,7 +32,6 @@
     "babel-preset-env": "^1.6.1",
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.7",
-    "eslint": "^4.11.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.0",
