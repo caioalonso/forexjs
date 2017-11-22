@@ -42,14 +42,12 @@ var chart = Highcharts.stockChart('chart', {
 const socket = socketio()
 
 socket.on('pastData', (data) => {
-  console.log('pastData')
   var candles = []
   data.candles.forEach((candle) => {
     var date = moment(candle.time).valueOf()
     candles.push([date, +candle.mid.o, +candle.mid.h, +candle.mid.l, +candle.mid.c])
   })
   chart.series[0].setData(candles)
-  console.log(chart)
 
   socket.on('data', (tick) => {
     tick.price = +tick.bids[0].price

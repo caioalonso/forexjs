@@ -13,9 +13,6 @@ export function runTest (file) {
     updateCandles(tick)
     runStrategy()
   })
-  .on('end', function () {
-    console.log('\ndone\n')
-  })
 }
 
 function updateCandles (tick) {
@@ -30,9 +27,8 @@ function updateCandles (tick) {
   }
 }
 
-function runStrategy (tick) {
+function runStrategy () {
   if (candles.length < 20) {
     return
   }
-  console.log('running')
 }
