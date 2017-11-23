@@ -5,10 +5,10 @@
   "license": "MIT",
   "scripts": {
     "start": "yarn dev:start",
-    "dev:start": "nodemon -e js,jsx --ignore lib --ignore dist --exec babel-node src/server",
-    "dev:wds": "webpack-dev-server --progress",
-    "dev:compile": "babel src -d .compiled",
-    "prod:build": "rimraf lib dist && babel src -d lib --ignore .test.js && cross-env NODE_ENV=production webpack -p --progress",
+    "dev:start": "BABEL_ENV=server nodemon -e js,jsx --ignore lib --ignore dist --exec babel-node src/server",
+    "dev:wds": "BABEL_ENV=client webpack-dev-server --progress",
+    "dev:compile": "BABEL_ENV=server babel src -d .compiled",
+    "prod:build": "rimraf lib dist && BABEL_ENV=server babel src -d lib --ignore .test.js && cross-env NODE_ENV=production webpack -p --progress",
     "prod:start": "cross-env NODE_ENV=production pm2 start lib/server && pm2 logs",
     "prod:stop": "pm2 delete all",
     "prepush": "yarn prod:build"

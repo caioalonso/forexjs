@@ -1,3 +1,14 @@
 {
-  "presets": ["env"]
+  "env": {
+    "server": {
+      "presets": [
+        ["env", {"targets": {"node": "current"}}]
+      ]
+    },
+    "client": {
+      "presets": [
+        ["env"]
+      ]
+    }
+  }
 }
