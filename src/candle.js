@@ -1,6 +1,6 @@
 'use strict'
 
-export default class Candle {
+class Candle {
   constructor (timestamp, open, high, low, close) {
     this.timestamp = timestamp
     this.open = open
@@ -20,3 +20,5 @@ export default class Candle {
     this.close = tick[2]
   }
 }
+
+module.exports = Candle

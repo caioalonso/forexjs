@@ -1,18 +1,19 @@
 'use strict'
 
-import moment from 'moment'
-import Candle from './candle'
-import csv from 'fast-csv'
+const moment = require('moment')
+const Candle = require('./candle')
+const csv = require('fast-csv')
 
 var candles = []
 
-export function runTest (file) {
+function runTest (file) {
   var csvFile = csv.fromPath(file)
 
   csvFile.on('data', function (tick) {
     updateCandles(tick)
-    runStrategy()
+    runStrategy(tick)
   })
+  process.exit()
 }
 
 function updateCandles (tick) {
@@ -27,8 +28,9 @@ function updateCandles (tick) {
   }
 }
 
-function runStrategy () {
+function runStrategy (tick) {
   if (candles.length < 20) {
-    return
   }
 }
+
+module.exports = runTest
