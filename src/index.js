@@ -34,4 +34,3 @@ async function run () {
   stream.on('data', data => {
   })
 }
-

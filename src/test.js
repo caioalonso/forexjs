@@ -1,8 +1,9 @@
 'use strict'
 
-const moment = require('moment')
+const fs = require('fs')
+const readline = require('readline')
+const stream = require('stream')
 const Candle = require('./candle')
-const csv = require('fast-csv')
 const SMA = require('./sma')
 const EMA = require('./ema')
 
@@ -23,21 +24,35 @@ var position = 0
 var positionSide = null
 
 function runTest (file) {
-  csv
-    .fromPath(file)
-    .on('data', tick => {
-      updateCandles(tick)
-      runStrategy(tick)
-      console.log(balance)
-    }).on('end', function(){
-      console.log('done')
-    })
+  var instream = fs.createReadStream(file)
+  var outstream = new stream
+  var rl = readline.createInterface(instream, outstream)
+  
+  rl.on('line', function(line) {
+    let tick = line.split(',')
+    tick[0] = parseDate(tick[0])
+    updateCandles(tick)
+    runStrategy(tick)   
+  })
+}
+
+function parseDate (dateStr) {
+  let [date, time] = dateStr.split(' ')
+  let [year, month, day] = date.split('-')
+  let [hour, minute, secondms] = time.split(':')
+  let [second, ms] = secondms.split('.')
+  if (ms === undefined) {
+    ms = 0
+  } else {
+    ms = ms/1000
+  }
+  
+  return new Date(year, month, day, hour, minute, second, ms)
 }
 
 function updateCandles (tick) {
-  let date = moment(tick[0])
-  tick.roundDate = date.startOf('minute').valueOf()
-  date = date.valueOf()
+  let date = tick[0].valueOf()
+  tick.roundDate = roundMinute(tick[0]).valueOf()
   const lastCandle = candles[candles.length - 1]
   const price = +tick[2]
   if (lastCandle && tick.roundDate === lastCandle.timestamp) {
@@ -47,6 +62,12 @@ function updateCandles (tick) {
     candles.push(new Candle(tick.roundDate, price, price, price))
     indicators.forEach(ind => ind.insert(price))
   }
+}
+
+function roundMinute (date) {
+  date.setMilliseconds(0)
+  date.setSeconds(0)
+  return date
 }
 
 function runStrategy (tick) {

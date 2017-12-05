@@ -10,7 +10,6 @@
   "dependencies": {
     "commander": "^2.11.0",
     "eslint": "^4.11.0",
-    "fast-csv": "^2.4.1",
     "mongodb": "^2.2.33",
     "progress": "^2.0.0",
     "simple-fxtrade": "^1.1.2"
@@ -18,7 +17,6 @@
   "devDependencies": {
     "cross-env": "^5.1.1",
     "husky": "^0.14.3",
-    "moment": "^2.19.2",
     "nodemon": "^1.12.1",
     "pm2": "^2.7.2",
     "rimraf": "^2.6.2",
